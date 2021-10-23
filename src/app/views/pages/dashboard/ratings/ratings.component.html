@@ -49,42 +49,45 @@
           </mat-form-field>
 
           <div class="card-columns animated fadeIn">
-
             <div *ngIf="selected.title!==undefined">
               <img class="card-img-top" [src]="selected.img" alt="">
-
               <div>
-                <div>
-                  <sv-star-rating
-                    size="30px"
-                    margin="10px"
-                    bgColor="#DCDCDC"
-                    activeBgColor="teal"
-                    [(value)]="value"
-                    [readonly]="false"
-                    [disabled]="false"
-                    [radiusRatio]="29"
-                    [innerOuterRadiusRatio]="3"
-                    (valueChange)="valueChange()">
-                  </sv-star-rating>
+                <div class="row justify-content-center">
+                  <div class="col-auto">
+                    <div>
+                      <sv-star-rating
+                        size="30px"
+                        margin="10px"
+                        bgColor="#DCDCDC"
+                        activeBgColor="teal"
+                        [(value)]="value"
+                        [readonly]="false"
+                        [disabled]="false"
+                        [radiusRatio]="29"
+                        [innerOuterRadiusRatio]="3"
+                        (valueChange)="valueChange()">
+                      </sv-star-rating>
+                    </div>
+                  </div>
                 </div>
-
-                <div>
-                  <p>Tu calificación: {{value}}</p>
+                <div class="row justify-content-center">
+                  <div class="col-auto">
+                    <div>
+                      <p>Tu calificación: {{value}}</p>
+                    </div>
+                  </div>
                 </div>
-
-                <div>
+                <br>
+                <div class="mx-auto" style="width: 200px;">
                   <div class="position-relative mt-4">
                     <div class="position-absolute bottom-0 end-0">
                       <button class="text-decoration-none btn btn-outline-dark border-0 me-3" routerLinkActive="active"
-                              mat-raised-button mat-button (click)="createRecord()">Puntuar
+                              mat-raised-button mat-button (click)="createRecord()">Registar calificación
                       </button>
                     </div>
                   </div>
                 </div>
-
               </div>
-
             </div>
           </div>
           <div>
@@ -124,7 +127,7 @@
           </mat-form-field>
         </div>
         <div>
-          <mat-form-field appearance="fill" >
+          <mat-form-field appearance="fill">
             <mat-label>Selecione una calificación</mat-label>
             <mat-select (selectionChange)="filter($event.value)">
               <mat-option [value]="">Todo</mat-option>

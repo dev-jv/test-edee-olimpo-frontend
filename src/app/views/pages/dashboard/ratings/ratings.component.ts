@@ -104,10 +104,10 @@ export class RatingsComponent implements OnInit {
       const upRecords = [...this.dataSource];
       upRecords.push(this.record);
       this.dataSource = upRecords;
-      this.alertService.tryToRegister('Se ha registrado correctamente su puntuación', 'success');
+      this.alertService.tryToRegister('Se ha registrado correctamente su calificación', 'success');
     }, error => {
       console.error(error);
-      this.alertService.tryToRegister('Ocurrió un error, vuelva a intentarlo', 'error');
+      this.alertService.tryToRegister('Verifique sus datos y vuelva a intentarlo', 'error');
     });
   }
 
