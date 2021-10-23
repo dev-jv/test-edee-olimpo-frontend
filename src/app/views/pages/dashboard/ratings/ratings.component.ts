@@ -28,6 +28,8 @@ export class RatingsComponent implements OnInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
+  rtg: string;
+
   record: RecordInt;
 
   constructor(public dialog: MatDialog,
@@ -90,12 +92,18 @@ export class RatingsComponent implements OnInit {
   }
 
   createRecord() {
-    const rtg = this.value.toString();
+    if (!this.value) {
+      this.rtg = '';
+    } else {
+      this.rtg = this.value.toString();
+    }
+    // console.log(this.rtg);
+
     const newRec: RatingCls = {
       name : this.firstFormGroup.getRawValue().name,
       email : this.firstFormGroup.getRawValue().email,
       movie : this.secondFormGroup.getRawValue().movie.title,
-      rating : rtg
+      rating : this.rtg
     };
     // console.log('newRec', newRec);
     this.ratingsService.saveRating(newRec).subscribe((resp) => {
