@@ -1,56 +1,58 @@
-<button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
-  {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+<button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear" [disabled]="firstFormGroup.invalid">
+  {{!isLinear ? 'Desactivar el modo lineal' : 'Activar el modo lineal'}}
 </button>
-
 <mat-horizontal-stepper [linear]="isLinear" #stepper>
-
   <mat-step [stepControl]="firstFormGroup">
-    <form [formGroup]="firstFormGroup">
+    <form [formGroup]="firstFormGroup" (ngSubmit)="submitFirstFormGroup()">
       <ng-template matStepLabel>Ingresa tus datos</ng-template>
-
       <div class="row justify-content-center">
         <div class="col-4">
           <mat-form-field appearance="fill">
             <mat-label>Nombre</mat-label>
-            <input matInput placeholder="Javier Leon" formControlName="name" required>
+            <input matInput placeholder="Luis Torres" formControlName="name">
+            <span class="form-text text-danger"
+                  *ngIf="invalidField('name')">
+                {{errorNameMsg}}
+            </span>
           </mat-form-field>
         </div>
         <div class="col-4">
           <mat-form-field appearance="fill">
             <mat-label>Email</mat-label>
-            <input matInput placeholder="email@olimpo.com" formControlName="email" required>
+            <input matInput placeholder="email@olimpo.com" formControlName="email">
+            <span class="form-text text-danger"
+                  *ngIf="invalidField('email')">
+                  {{errorEmailMsg}}
+              </span>
           </mat-form-field>
         </div>
       </div>
-
       <br>
-
       <div class="position-relative">
         <div class="position-absolute bottom-0 end-0">
           <button class="text-decoration-none btn btn-outline-dark border-0 me-3" routerLinkActive="active"
-                  mat-raised-button mat-button matStepperNext>Next
+                  mat-raised-button mat-button matStepperNext [disabled]="firstFormGroup.invalid"
+                  type="submit">Siguiente
           </button>
         </div>
       </div>
-
     </form>
   </mat-step>
-
   <mat-step [stepControl]="secondFormGroup" label="Dale una puntuación a las películas que desees">
-    <form [formGroup]="secondFormGroup">
+    <form [formGroup]="secondFormGroup" (ngSubmit)="submitSecondFormGroup()">
       <div class="row justify-content-center">
         <div class="col-auto w-50">
-
           <mat-form-field appearance="fill" class="w-100">
-            <mat-label>Selecione una película</mat-label>
+            <mat-label>Seleccione una película</mat-label>
             <mat-select [(value)]="selected" formControlName="movie" (click)="test()">
-              <mat-option *ngFor="let movie of movies" [value]="movie">{{movie.title}}</mat-option>
+              <mat-option *ngFor="let movie of movies" [value]="movie">{{movie.title}} ({{movie.year}})</mat-option>
             </mat-select>
           </mat-form-field>
-
           <div class="card-columns animated fadeIn">
             <div *ngIf="selected.title!==undefined">
-              <img class="card-img-top" [src]="selected.img" alt="">
+              <div class="row justify-content-center">
+                <img class="card-img-top" [src]="selected.img" alt="">
+              </div>
               <div>
                 <div class="row justify-content-center">
                   <div class="col-auto">
@@ -72,7 +74,7 @@
                 </div>
                 <div class="row justify-content-center">
                   <div class="col-auto">
-                    <div>
+                    <div class="cal">
                       <p>Tu calificación: {{value}}</p>
                     </div>
                   </div>
@@ -94,29 +96,22 @@
           </div>
         </div>
       </div>
-
       <br>
-
       <div class="position-relative mt-4">
         <div class="position-absolute bottom-0 end-0">
           <button class="text-decoration-none btn btn-outline-dark border-0 me-3" routerLinkActive="active" mat-button
-                  mat-raised-button matStepperPrevious>Back
+                  mat-raised-button matStepperPrevious>Atrás
           </button>
           <button class="text-decoration-none btn btn-outline-dark border-0 me-3" routerLinkActive="active" mat-button
-                  mat-raised-button matStepperNext>Next
+                  mat-raised-button matStepperNext>Siguiente
           </button>
         </div>
       </div>
-
       <br>
-
     </form>
-
   </mat-step>
-
   <mat-step>
     <ng-template matStepLabel>Calificaciones</ng-template>
-
     <div style="background-color: white;" class="shadow-sm rounded-3 mt-3 p-3">
       <div class="flex-row justify-content-between d-flex">
         <div>
@@ -128,7 +123,7 @@
         </div>
         <div>
           <mat-form-field appearance="fill">
-            <mat-label>Selecione una calificación</mat-label>
+            <mat-label>Seleccione una calificación</mat-label>
             <mat-select (selectionChange)="filter($event.value)">
               <mat-option [value]="">Todo</mat-option>
               <mat-option [value]="1">1</mat-option>
@@ -140,34 +135,27 @@
           </mat-form-field>
         </div>
       </div>
-
       <hr>
       <div>
         <table mat-table [dataSource]="dataSource" class="w-100 mat-elevation-z8">
-
           <ng-container matColumnDef="codeRecord">
             <th mat-header-cell *matHeaderCellDef>No.</th>
             <td mat-cell *matCellDef="let i = index"> {{i + 1}} </td>
           </ng-container>
-
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nombre</th>
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
           </ng-container>
-
           <ng-container matColumnDef="email">
             <th mat-header-cell *matHeaderCellDef>Email</th>
             <td mat-cell *matCellDef="let element"> {{element.email}} </td>
           </ng-container>
-
           <ng-container matColumnDef="movie">
             <th mat-header-cell *matHeaderCellDef>Película</th>
-            <td mat-cell *matCellDef="let element"> {{element.movie}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.movie}}</td>
           </ng-container>
-
           <ng-container matColumnDef="rating">
             <th mat-header-cell *matHeaderCellDef>Rating</th>
-            <!--            <td mat-cell *matCellDef="let element"> {{element.rating}} </td>-->
             <td mat-cell *matCellDef="let element">
               <div class="d-flex justify-content-start">
                 <div class="" *ngFor="let r of ' '.repeat(element.rating).split(''), let x = index">
@@ -179,7 +167,6 @@
               </div>
             </td>
           </ng-container>
-
           <ng-container matColumnDef="edit" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
@@ -190,11 +177,9 @@
               </button>
             </td>
           </ng-container>
-
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
-
       </div>
     </div>
     <br>
@@ -208,7 +193,5 @@
         </div>
       </div>
     </div>
-
   </mat-step>
-
 </mat-horizontal-stepper>

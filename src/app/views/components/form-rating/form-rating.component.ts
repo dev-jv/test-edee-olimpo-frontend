@@ -33,9 +33,9 @@ export class FormRatingComponent implements OnInit {
 
   ngOnInit(): void {
     this.record = this.formBuild.group({
-      name: ['', Validators.required],
-      email: ['', Validators.required],
-      movie: ['', Validators.required],
+      name: [{value: '', disabled: true}, Validators.required],
+      email: [{value: '', disabled: true}, Validators.required],
+      movie: [{value: '', disabled: true}, Validators.required],
       rating: ['', Validators.required],
     });
     this.loadDataToEdit();
@@ -50,11 +50,11 @@ export class FormRatingComponent implements OnInit {
     });
   }
 
-  UpdRating() {
+  UpdRating(): any {
     this.data.recordInt.rating = this.record.getRawValue().rating;
-    console.log('data', this.data.recordInt);
+    // console.log('data', this.data.recordInt);
     this.ratingsService.updateRating(this.data.recordInt).subscribe((resp) => {
-      console.log(resp);
+      // console.log(resp);
       this.dialogRef.close(resp.record);
     }, error => {
       console.error(error);
@@ -65,5 +65,4 @@ export class FormRatingComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
-
 }

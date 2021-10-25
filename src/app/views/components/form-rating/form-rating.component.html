@@ -2,7 +2,6 @@
   <div class="row">
     <p class="fw-bold">Editar registro</p>
   </div>
-
   <form [formGroup]="record">
     <div class="row">
       <mat-form-field appearance="fill" class="col-12">
@@ -23,7 +22,7 @@
       </mat-form-field>
     </div>
     <div class="row">
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="fill" class="col-12">
         <mat-label>Selecione la nueva puntuación</mat-label>
         <mat-select formControlName="rating">
           <mat-option *ngFor="let r of ratings" [value]="r">{{r}}</mat-option>
@@ -32,21 +31,18 @@
     </div>
   </form>
   <div class="row">
-
     <button mat-stroked-button color="warn"
-            class="col-6"
+            class="col-5 m-2"
             (click)="closeDialog()">
       <mat-icon>cancel</mat-icon>
       Cancelar
     </button>
-
     <button mat-stroked-button color="primary"
-            class="col-6"
+            class="col-5 m-2"
             [disabled]="record.invalid"
             (click)="UpdRating()">
       <mat-icon>save</mat-icon>
       Guardar
     </button>
-
   </div>
 </div>

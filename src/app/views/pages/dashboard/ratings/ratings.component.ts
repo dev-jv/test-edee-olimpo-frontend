@@ -22,9 +22,9 @@ export class RatingsComponent implements OnInit {
   movies: MovieCls[] = [];
   selected = new MovieCls();
 
-  value: number;
+  value = 0;
 
-  isLinear = false;
+  isLinear = true;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
@@ -41,13 +41,13 @@ export class RatingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.ratingsService.getRatings().subscribe(resp => {
-      console.log(resp);
+      // console.log(resp);
       this.records = resp.records;
       this.dataSource = this.records;
       for (const element of this.dataSource) {
         element.rating = Number(element.rating);
       }
-      console.log(this.dataSource);
+      // console.log(this.dataSource);
 
     }, error => {
       console.error(error);
@@ -55,8 +55,8 @@ export class RatingsComponent implements OnInit {
     });
 
     this.firstFormGroup = this.formBuilder.group({
-      name: ['', Validators.required],
-      email: ['', Validators.required]
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]]
     });
     this.secondFormGroup = this.formBuilder.group({
       movie: ['', Validators.required],
@@ -64,7 +64,7 @@ export class RatingsComponent implements OnInit {
     });
 
     this.ratingsService.getMovies().subscribe(resp => {
-      console.log(resp.movies);
+      // console.log(resp.movies);
       this.movies = resp.movies;
 
     }, error => {
@@ -73,32 +73,48 @@ export class RatingsComponent implements OnInit {
     });
   }
 
-  filter(selectedRtg) {
-    console.log('selectedRtg: ', selectedRtg);
+  invalidField(field: string): boolean {
+    return this.firstFormGroup.get(field)?.invalid
+      && this.firstFormGroup.get(field)?.touched;
+  }
+
+  get errorNameMsg(): string {
+    const errors = this.firstFormGroup.get('name')?.errors;
+    if ( errors?.required ) {
+      return 'Este campo es obligatorio';
+    } else if ( !(errors?.minLength < 2) ) {
+      return 'Mínimo 2 caracteres';
+    }
+  }
+
+  get errorEmailMsg(): string {
+    const errors = this.firstFormGroup.get('email')?.errors;
+    if ( errors?.required ) {
+      return 'Este campo es obligatorio';
+    } else if ( errors?.pattern ) {
+      return 'Email inválido';
+    }
+  }
+
+  filter(selectedRtg): any {
+    // console.log('selectedRtg: ', selectedRtg);
     this.ratingsService.getRatings(selectedRtg).subscribe(resp => {
-      console.log(resp);
+      // console.log(resp);
       this.records = resp.records;
       this.dataSource = this.records;
-
       for (const element of this.dataSource) {
         element.rating = Number(element.rating);
       }
-      console.log(this.dataSource);
-
+      // console.log(this.dataSource);
     }, error => {
       console.error(error);
       // this.alertService.errorDialog('Ocurrio un error inesperado');
     });
   }
 
-  createRecord() {
-    if (!this.value) {
-      this.rtg = '';
-    } else {
-      this.rtg = this.value.toString();
-    }
+  createRecord(): any {
+    this.rtg = this.value.toString();
     // console.log(this.rtg);
-
     const newRec: RatingCls = {
       name : this.firstFormGroup.getRawValue().name,
       email : this.firstFormGroup.getRawValue().email,
@@ -107,45 +123,60 @@ export class RatingsComponent implements OnInit {
     };
     // console.log('newRec', newRec);
     this.ratingsService.saveRating(newRec).subscribe((resp) => {
-      console.log(resp);
+      // console.log(resp);
       this.record = resp.record; // ... Pending > error
       const upRecords = [...this.dataSource];
       upRecords.push(this.record);
       this.dataSource = upRecords;
       this.alertService.tryToRegister('Se ha registrado correctamente su calificación', 'success');
+      this.isLinear = false;
     }, error => {
       console.error(error);
-      this.alertService.tryToRegister('Verifique sus datos y vuelva a intentarlo', 'error');
+      this.alertService.tryToRegister('La puntuación mínima es 1, vuelva a intentarlo', 'error');
     });
   }
 
-  editRating(element) {
+  editRating(element): void {
     // console.log(element);
     element.rating = element.rating.toString();
-    console.log(element);
+    // console.log(element);
     const dialogRef = this.dialog.open(FormRatingComponent, {
-      width: '500px',
+      width: '300px',
       data: {
         recordInt: element
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-      this.alertService.tryToRegister('Se ha registrado correctamente su nueva puntuación', 'success');
-      this.record = result;
-      console.log(this.record._id);
-      const newRecords = [...this.dataSource];
-      newRecords[newRecords.findIndex(el => el.id === this.record._id)] = this.record;
-      this.dataSource = newRecords;
+      // console.log(result);
+      if ( result ) {
+        this.record = result;
+        console.log(this.record._id);
+        const newRecords = [...this.dataSource];
+        newRecords[newRecords.findIndex(el => el.id === this.record._id)] = this.record;
+        this.dataSource = newRecords;
+        this.alertService.tryToRegister('Se ha registrado correctamente su nueva calificación', 'success');
+      } else {
+        this.alertService.tryToRegister('Se ha cancelado la edición del registro', 'warning');
+      }
     });
   }
 
-  valueChange() {
-    console.log(this.value);
+  valueChange(): any {
+    // console.log(this.value);
   }
 
-  test() {
-    console.log(this.selected);
+  test(): any {
+    // console.log(this.selected);
   }
 
+  submitFirstFormGroup(): any {
+    // console.log(this.firstFormGroup.value);
+    this.firstFormGroup.markAllAsTouched();
+    this.isLinear = false;
+  }
+
+  submitSecondFormGroup(): any {
+    // console.log(this.secondFormGroup.value);
+    this.secondFormGroup.markAllAsTouched();
+  }
 }
