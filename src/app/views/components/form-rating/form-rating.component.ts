@@ -52,13 +52,10 @@ export class FormRatingComponent implements OnInit {
 
   UpdRating(): any {
     this.data.recordInt.rating = this.record.getRawValue().rating;
-    // console.log('data', this.data.recordInt);
     this.ratingsService.updateRating(this.data.recordInt).subscribe((resp) => {
-      // console.log(resp);
       this.dialogRef.close(resp.record);
     }, error => {
       console.error(error);
-      // this.alertService.errorDialog(error.error.message);
     });
   }
 

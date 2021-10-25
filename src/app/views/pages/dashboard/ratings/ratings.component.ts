@@ -41,17 +41,14 @@ export class RatingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.ratingsService.getRatings().subscribe(resp => {
-      // console.log(resp);
       this.records = resp.records;
       this.dataSource = this.records;
       for (const element of this.dataSource) {
         element.rating = Number(element.rating);
       }
-      // console.log(this.dataSource);
-
     }, error => {
       console.error(error);
-      // this.alertService.errorDialog('Ocurrio un error inesperado');
+      this.alertService.errorDialog('Ocurrió un error inesperado');
     });
 
     this.firstFormGroup = this.formBuilder.group({
@@ -64,12 +61,10 @@ export class RatingsComponent implements OnInit {
     });
 
     this.ratingsService.getMovies().subscribe(resp => {
-      // console.log(resp.movies);
       this.movies = resp.movies;
-
     }, error => {
       console.error(error);
-      // this.alertService.errorDialog('Ocurrio un error inesperado');
+      this.alertService.errorDialog('Ocurrió un error inesperado');
     });
   }
 
@@ -97,34 +92,28 @@ export class RatingsComponent implements OnInit {
   }
 
   filter(selectedRtg): any {
-    // console.log('selectedRtg: ', selectedRtg);
     this.ratingsService.getRatings(selectedRtg).subscribe(resp => {
-      // console.log(resp);
       this.records = resp.records;
       this.dataSource = this.records;
       for (const element of this.dataSource) {
         element.rating = Number(element.rating);
       }
-      // console.log(this.dataSource);
     }, error => {
       console.error(error);
-      // this.alertService.errorDialog('Ocurrio un error inesperado');
+      this.alertService.errorDialog('Ocurrio un error inesperado');
     });
   }
 
   createRecord(): any {
     this.rtg = this.value.toString();
-    // console.log(this.rtg);
     const newRec: RatingCls = {
       name : this.firstFormGroup.getRawValue().name,
       email : this.firstFormGroup.getRawValue().email,
       movie : this.secondFormGroup.getRawValue().movie.title,
       rating : this.rtg
     };
-    // console.log('newRec', newRec);
     this.ratingsService.saveRating(newRec).subscribe((resp) => {
-      // console.log(resp);
-      this.record = resp.record; // ... Pending > error
+      this.record = resp.record;
       const upRecords = [...this.dataSource];
       upRecords.push(this.record);
       this.dataSource = upRecords;
@@ -137,9 +126,7 @@ export class RatingsComponent implements OnInit {
   }
 
   editRating(element): void {
-    // console.log(element);
     element.rating = element.rating.toString();
-    // console.log(element);
     const dialogRef = this.dialog.open(FormRatingComponent, {
       width: '300px',
       data: {
@@ -147,7 +134,6 @@ export class RatingsComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      // console.log(result);
       if ( result ) {
         this.record = result;
         console.log(this.record._id);
@@ -162,21 +148,14 @@ export class RatingsComponent implements OnInit {
   }
 
   valueChange(): any {
-    // console.log(this.value);
-  }
-
-  test(): any {
-    // console.log(this.selected);
   }
 
   submitFirstFormGroup(): any {
-    // console.log(this.firstFormGroup.value);
     this.firstFormGroup.markAllAsTouched();
     this.isLinear = false;
   }
 
   submitSecondFormGroup(): any {
-    // console.log(this.secondFormGroup.value);
     this.secondFormGroup.markAllAsTouched();
   }
 }
